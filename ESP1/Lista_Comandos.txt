@@ -1,0 +1,266 @@
+📋 LISTA DE COMANDOS DO SISTEMA BEACONFLY
+
+Versão: 2.0.0
+Data: 2026-04-19
+Uso: Referência completa para desenvolvimento da Ground Station
+
+# 1. COMANDOS (MSG_COMMAND)
+
+Categoria	Destinatário	Código (Hex)	Descrição	        Observações
+Básicos	    ESP1/ESP2	    0xC0	        CMD_ARM	            Armar motores. Só permitido em solo (altitude < 0.5m). Envia pulso de 1000µs ao ESC por 2 segundos.
+Básicos	    ESP1/ESP2	    0xC1	        CMD_DISARM	        Desarmar motores. Corta potência imediatamente. Permitido em qualquer estado.
+Básicos	    ESP1	        0xC2	        CMD_SET_MODE	    Mudar modo de voo. Parâmetro: uint8_t (0-5). Ver tabela de modos de voo.
+Básicos	    ESP1/ESP2	    0xC3	        CMD_REBOOT	        Reiniciar o ESP. Bloqueado em voo por segurança.
+Básicos	    ESP1/ESP2	    0xC4	        CMD_SHUTDOWN	    Desligamento controlado. Bloqueado em voo.
+Controlo	ESP1	        0xD0	        CMD_SET_ALT_TARGET	Definir altitude alvo. Parâmetro: float (metros). Range: 0-400m.
+Controlo	ESP1	        0xD1	        CMD_SET_THROTTLE	Definir potência do motor. Parâmetro: float (0-1). 0 = 1000µs, 1 = 1900µs.
+Controlo	ESP1	        0xD2	        CMD_SET_ROLL	    Definir ângulo de roll desejado. Parâmetro: float (graus). Range: -45 a +45.
+Controlo	ESP1	        0xD3	        CMD_SET_PITCH	    Definir ângulo de pitch desejado. Parâmetro: float (graus). Range: -35 a +35.
+Controlo	ESP1	        0xD4	        CMD_SET_YAW	        Definir velocidade de yaw. Parâmetro: float (°/s). Range: -180 a +180.
+Controlo	ESP1	        0xD5	        CMD_SET_HEADING	    Definir heading desejado. Parâmetro: float (graus). Range: 0-360.
+Avançados	ESP1	        0xE0	        CMD_SENSOR_CALIB	Calibrar sensores (IMU, barómetro). Bloqueado em voo.
+Avançados	ESP1	        0xE1	        CMD_ACTUATOR_CALIB	Calibrar atuadores (ESCs). Bloqueado em voo.
+Avançados	ESP1/ESP2	    0xE2	        CMD_SET_PARAM	    Definir parâmetro de configuração (PIDs, trims, etc.).
+Avançados	ESP1/ESP2	    0xE3	        CMD_GET_ALL	        Pedir telemetria completa. Resposta: MSG_TELEMETRY com todos os campos.
+Navegação	ESP1	        0xF0	        CMD_NEXT_WAYPOINTS	Enviar lista de waypoints. Formato: lista TLV de waypoints.
+Navegação	ESP1	        0xF1	        CMD_RTL	            Return To Launch. Regressar ao ponto de descolagem.
+Navegação	ESP1	        0xF2	        CMD_SET_POSITION	Definir posição alvo. Parâmetros: latitude, longitude, altitude.
+
+# 2. COMANDOS SHELL (MSG_SHELL_CMD)
+
+Categoria	Destinatário	Código (Hex)	Descrição	                Observações
+Sistema	    ESP1/ESP2	    0x01	        CMD_SHELL_HELP	            Mostrar ajuda. Comando: help [comando]
+Sistema	    ESP1/ESP2	    0x02	        CMD_SHELL_STATUS	        Mostrar estado do sistema. Comando: status
+Sistema	    ESP1/ESP2	    0x03	        CMD_SHELL_LOGBOOK	        Mostrar logbook. Comando: logbook
+Sistema	    ESP1/ESP2	    0x04	        CMD_SHELL_CLEAR	            Limpar logbook. Comando: clear
+Sistema	    ESP1/ESP2	    0x05	        CMD_SHELL_SAVE	            Salvar config na NVS. Comando: save
+Sistema	    ESP1/ESP2	    0x06	        CMD_SHELL_RESET_CONFIG	    Resetar config padrão. Comando: reset_config
+Leitura	    ESP1	        0x10	        CMD_SHELL_GET_ROLL	        Ler ângulo de roll. Comando: get_roll
+Leitura	    ESP1	        0x11	        CMD_SHELL_GET_PITCH	        Ler ângulo de pitch. Comando: get_pitch
+Leitura	    ESP1	        0x12	        CMD_SHELL_GET_YAW	        Ler ângulo de yaw. Comando: get_yaw
+Leitura	    ESP1	        0x13	        CMD_SHELL_GET_HEADING	    Ler rumo magnético. Comando: get_heading
+Leitura	    ESP1	        0x14            CMD_SHELL_GET_ALTITUDE	    Ler altitude. Comando: get_alt
+Leitura	    ESP1	        0x15	        CMD_SHELL_GET_BATTERY	    Ler bateria (V/A). Comando: get_batt
+Leitura	    ESP1	        0x16	        CMD_SHELL_GET_OUTPUTS	    Ler PWM dos atuadores. Comando: get_outputs
+Leitura	    ESP1	        0x17	        CMD_SHELL_GET_MODE	        Ler modo de voo. Comando: get_mode
+Leitura	    ESP1	        0x18	        CMD_SHELL_GET_SECURITY	    Ler nível de segurança. Comando: get_security
+Leitura	    ESP1	        0x19	        CMD_SHELL_GET_PID	        Ler ganhos PID. Comando: get_pid <axis>
+Leitura	    ESP1	        0x1A	        CMD_SHELL_GET_TRIM	        Ler trims atuais. Comando: get_trim
+Leitura	    ESP1/ESP2	    0x1B	        CMD_SHELL_GET_TEMPERATURE	Ler temperaturas. Comando: get_temp
+Controlo	ESP1	        0x20	        CMD_SHELL_SET_ROLL	        Definir roll. Comando: set_roll <graus>
+Controlo	ESP1	        0x21	        CMD_SHELL_SET_PITCH	        Definir pitch. Comando: set_pitch <graus>
+Controlo	ESP1	        0x22	        CMD_SHELL_SET_YAW	        Definir yaw. Comando: set_yaw <graus>
+Controlo	ESP1	        0x23	        CMD_SHELL_SET_ALTITUDE	    Definir altitude alvo. Comando: set_alt <metros>
+Controlo	ESP1	        0x24	        CMD_SHELL_SET_THROTTLE	    Definir throttle. Comando: set_throttle <0-100>
+Controlo	ESP1	        0x25	        CMD_SHELL_SET_MODE	        Definir modo de voo. Comando: set_mode <0-5>
+Controlo	ESP1	        0x26	        CMD_SHELL_SET_PID	        Definir ganhos PID. Comando: set_pid <axis> <Kp> <Ki> <Kd>
+Controlo	ESP1	        0x27	        CMD_SHELL_SET_TRIM	        Definir trims. Comando: set_trim <5 valores>
+Sistema	    ESP1/ESP2	    0x30	        CMD_SHELL_REBOOT	        Reiniciar ESP. Comando: reboot
+Sistema	    ESP1	        0x31	        CMD_SHELL_ARM	            Armar motores. Comando: arm
+Sistema	    ESP1	        0x32	        CMD_SHELL_DISARM	        Desarmar motores. Comando: disarm
+Sistema	    ESP1	        0x33	        CMD_SHELL_CALIBRATE	        Calibrar sensores. Comando: calibrate <tipo>
+Debug	    ESP1/ESP2	    0x40	        CMD_SHELL_DEBUG_ON	        Ativar debug. Comando: debug_on
+Debug	    ESP1/ESP2	    0x41	        CMD_SHELL_DEBUG_OFF	        Desativar debug. Comando: debug_off
+Debug	    ESP1/ESP2	    0x42	        CMD_SHELL_ECHO_ON	        Ativar eco. Comando: echo_on
+Debug	    ESP1/ESP2	    0x43	        CMD_SHELL_ECHO_OFF	        Desativar eco. Comando: echo_off
+Debug	    ESP1/ESP2	    0x44	        CMD_SHELL_TEST	            Teste diagnóstico. Comando: test
+Telemetria	ESP1	        0x50	        CMD_SHELL_START_LOG	        Iniciar gravação. Comando: start_log
+Telemetria	ESP1	        0x51	        CMD_SHELL_STOP_LOG	        Parar gravação. Comando: stop_log
+Telemetria	ESP1	        0x52	        CMD_SHELL_MARKER	        Adicionar marcador. Comando: marker <texto>
+
+
+
+📨 LISTA DE MENSAGENS DO SISTEMA BEACONFLY
+
+Versão: 2.0.0
+Data: 2026-04-19
+Uso: Referência para implementação da Ground Station
+
+# 1. MENSAGENS DE SISTEMA (MSG_*)
+
+ID (Hex)	Constante	Direção	Descrição	Payload
+0x10	MSG_HEARTBEAT	ESP1 → GS	Coração do sistema. Indica que o ESP1 está vivo. Enviado a cada 1 segundo.	Timestamp (opcional)
+0x11	MSG_TELEMETRY	ESP2 → GS	Telemetria normal do sistema. Dados filtrados (10Hz). Contém campos TLV com estado do sistema.	Lista TLV com FLD_ROLL, FLD_PITCH, FLD_ALT_FUSED, FLD_BATT_V, etc.
+0x12	MSG_COMMAND	GS → ESP1	Comando da Ground Station para o ESP1. Pode ser CMD_ARM, CMD_SET_ROLL, etc.	ID do comando + parâmetros
+0x13	MSG_ACK	ESP1 → GS	Confirmação de receção de comando. Opcional (pode ser desativado).	ID do comando confirmado
+0x14	MSG_FAILSAFE	ESP1/ESP2 → GS	Notificação de ativação/desativação do modo failsafe. Prioridade SUPER_CRITICAL.	Razão (FLD_FS_REASON) + Ação (FLD_FS_ACTION)
+0x15	MSG_DEBUG	ESP1/ESP2 → GS	Mensagens de debug para desenvolvimento. Prioridade dinâmica (SUPER_LOW ou SUPER_CRITICAL).	Texto livre
+0x16	MSG_VIDEO	ESP1 → GS	Pacote de vídeo (streaming experimental). Fragmentado em chunks.	FLD_VIDEO_FRAME_ID, FLD_VIDEO_CHUNK_ID, FLD_VIDEO_TOTAL, FLD_VIDEO_PAYLOAD
+0x17	MSG_SHELL_CMD	GS ↔ ESP1/ESP2	Comando de shell remoto. Permite diagnóstico e configuração remota.	Comando em texto (ex: "status", "get_roll")
+0x18	MSG_SI_DATA	ESP2 → ESP1	Dados em unidades SI (Système International). Enviados do ESP2 para o ESP1 para controlo de voo.	FLD_ROLL, FLD_PITCH, FLD_YAW, FLD_ROLL_RATE, FLD_PITCH_RATE, FLD_YAW_RATE, FLD_ALT_FUSED, FLD_VX, FLD_VY, FLD_VZ, FLD_BATT_V, FLD_BATT_A
+
+# 2. CAMPOS TLV (DENTRO DAS MENSAGENS)
+
+## GPS / Navegação
+
+ID (Hex)	Constante	Tipo	Descrição	Unidade
+0x20	FLD_GPS_LAT	int32_t	Latitude	graus × 10⁷
+0x21	FLD_GPS_LON	int32_t	Longitude	graus × 10⁷
+0x22	FLD_GPS_ALT	int32_t	Altitude GPS	mm
+0x23	FLD_GPS_SPEED	uint16_t	Velocidade GPS	cm/s
+0x24	FLD_GPS_SATS	uint8_t	Número de satélites	-
+0x25	FLD_GPS_LINK	uint8_t	Qualidade do link GPS	% (0-100)
+0x26	FLD_GPS_HDOP	uint16_t	HDOP (precisão horizontal)	×100
+
+## IMU / Atitude
+
+ID (Hex)	Constante	Tipo	Descrição	Unidade
+0x30	FLD_ROLL	float	Ângulo de rolamento	radianos
+0x31	FLD_PITCH	float	Ângulo de inclinação	radianos
+0x32	FLD_YAW	float	Ângulo de guinada	radianos
+0x33	FLD_VX	float	Velocidade linear X	m/s
+0x34	FLD_VY	float	Velocidade linear Y	m/s
+0x35	FLD_VZ	float	Velocidade linear Z	m/s
+0x36	FLD_HEADING	float	Rumo magnético	graus
+0x37	FLD_ROLL_RATE	float	Velocidade angular roll	°/s
+0x38	FLD_PITCH_RATE	float	Velocidade angular pitch	°/s
+0x39	FLD_YAW_RATE	float	Velocidade angular yaw	°/s
+
+## Estado de Voo
+
+ID (Hex)	Constante	Tipo	Descrição	Unidade
+0x40	FLD_ALT_GPS	float	Altitude GPS	metros
+0x41	FLD_ALT_BARO	float	Altitude barométrica	metros
+0x42	FLD_VEL_GPS	float	Velocidade GPS	m/s
+0x43	FLD_VEL_CALC	float	Velocidade calculada por fusão	m/s
+0x44	FLD_LOOP_TIME	uint16_t	Tempo do último loop	µs
+
+## Energia / Bateria
+
+ID (Hex)	Constante	Tipo	Descrição	Unidade
+0x50	FLD_BATT_V	float	Tensão da bateria	volts
+0x51	FLD_BATT_A	float	Corrente	amperes
+0x52	FLD_BATT_W	float	Potência	watts
+0x53	FLD_BATT_CHG	float	Carga consumida	Ah
+0x54	FLD_BATT_SOC	float	Estado de carga	0-1
+
+## Temperatura
+
+ID (Hex)	Constante	Tipo	Descrição	Unidade
+0x60	FLD_TEMP1	float	Temperatura ESC1	°C
+0x61	FLD_TEMP2	float	Temperatura ESC2	°C
+0x62	FLD_TEMP3	float	Temperatura ESC3	°C
+0x63	FLD_TEMP4	float	Temperatura ESC4	°C
+0x64	FLD_ESP1_TEMP	float	Temperatura ESP1	°C
+0x65	FLD_ESP2_TEMP	float	Temperatura ESP2	°C
+
+## Sistema
+
+ID (Hex)	Constante	Tipo	Descrição	Unidade
+0x70	FLD_STATE	uint8_t	Estado do sistema	SystemState enum
+0x71	FLD_MODE	uint8_t	Modo de voo ativo	FlightMode enum
+0x72	FLD_ERRORS	uint32_t	Mapa de bits de erros	bitmask
+0x73	FLD_RX_LINK	uint8_t	Qualidade do link de receção	%
+0x74	FLD_TX_LINK	uint8_t	Qualidade do link de transmissão	%
+0x75	FLD_ESP1_LOAD	uint8_t	Carga da CPU ESP1	%
+0x76	FLD_ESP2_LOAD	uint8_t	Carga da CPU ESP2	%
+
+## Failsafe
+
+ID (Hex)	Constante	Tipo	Descrição	Unidade
+0xA1	FLD_FS_REASON	uint8_t	Razão do failsafe	FailsafeReason enum
+0xA2	FLD_FS_ACTION	uint8_t	Ação em curso	FailsafeAction enum
+0xA3	FLD_FS_STATE	uint8_t	Estado do failsafe	1=ativo, 0=inativo
+
+## Vídeo
+
+ID (Hex)	Constante	Tipo	Descrição	Unidade
+0xB0	FLD_VIDEO_FRAME_ID	uint16_t	Número do frame	-
+0xB1	FLD_VIDEO_CHUNK_ID	uint8_t	Índice do chunk	-
+0xB2	FLD_VIDEO_TOTAL	uint8_t	Total de chunks neste frame	-
+0xB3	FLD_VIDEO_PAYLOAD	uint8_t[]	Payload de vídeo	bytes
+
+# 3. ENUMS AUXILIARES
+
+## SystemState
+
+Valor	Constante	Descrição
+0	SYS_STATE_BOOTING	Arranque do sistema
+1	SYS_STATE_INIT	Inicialização
+2	SYS_STATE_IDLE	Pronto, à espera
+3	SYS_STATE_ARMED	Armado
+4	SYS_STATE_FLYING	Em voo
+5	SYS_STATE_FAILSAFE	Modo segurança
+6	SYS_STATE_ERROR	Erro crítico
+7	SYS_STATE_SHUTDOWN	Desligamento
+
+## FlightMode
+
+Valor	Constante	Descrição
+0	MODE_MANUAL	Controlo direto
+1	MODE_STABILIZE	Estabilização angular
+2	MODE_ALT_HOLD	Manutenção de altitude
+3	MODE_POSHOLD	Manutenção de posição
+4	MODE_AUTO	Navegação autónoma
+5	MODE_RTL	Return To Launch
+
+## FailsafeReason
+
+Valor	Constante	Descrição
+0	FS_REASON_NONE	Sem failsafe
+1	FS_REASON_LOST_LINK	Perda de comunicação
+2	FS_REASON_LOW_BATTERY	Bateria baixa
+3	FS_REASON_GPS_LOST	Perda de GPS
+4	FS_REASON_IMU_ERROR	Erro IMU
+5	FS_REASON_MANUAL_TRIGGER	Ativação manual
+
+## FailsafeAction
+
+Valor	Constante	Descrição
+0	FS_ACTION_NONE	Nenhuma ação
+1	FS_ACTION_HOVER	Pairar
+2	FS_ACTION_RTL	Regressar à origem
+3	FS_ACTION_LAND	Aterrar
+4	FS_ACTION_CUT_THROTTLE	Cortar motores
+5	FS_ACTION_DISARM	Desarmar
+
+## PriorityLevel
+
+Valor	Constante	Descrição
+0	PRIORITY_SUPER_CRITICAL	Failsafe, emergência
+1	PRIORITY_CRITICAL	Comandos de voo
+2	PRIORITY_HIGH	Telemetria crítica
+3	PRIORITY_MEDIUM	Telemetria normal
+4	PRIORITY_LOW	Debug, shell
+5	PRIORITY_SUPER_LOW	Vídeo, dados extensivos
+
+# 4. EXEMPLOS DE MENSAGENS
+
+## Exemplo: MSG_TELEMETRY (telemetria normal)
+
+```cpp
+TLVMessage msg;
+msg.msgID = MSG_TELEMETRY;
+msg.tlvCount = 6;
+
+addTLVFloat(&msg, FLD_ROLL, 2.34f);
+addTLVFloat(&msg, FLD_PITCH, -1.23f);
+addTLVFloat(&msg, FLD_HEADING, 145.67f);
+addTLVFloat(&msg, FLD_ALT_BARO, 12.34f);
+addTLVFloat(&msg, FLD_BATT_V, 12.34f);
+addTLVUint8(&msg, FLD_MODE, MODE_STABILIZE);
+´´´
+
+## Exemplo: MSG_COMMAND (comando da GS)
+
+```cpp
+TLVMessage msg;
+msg.msgID = MSG_COMMAND;
+msg.tlvCount = 2;
+
+addTLVUint8(&msg, CMD_SET_MODE, MODE_ALT_HOLD);
+addTLVFloat(&msg, CMD_SET_ALT_TARGET, 50.0f);
+´´´
+
+## Exemplo: MSG_SHELL_CMD (comando shell)
+
+```cpp
+TLVMessage msg;
+msg.msgID = MSG_SHELL_CMD;
+msg.tlvCount = 1;
+
+const char* cmd = "get_roll";
+addTLV(&msg, 0x01, cmd, strlen(cmd));
+´´´
+
+Fim das listas – BeaconFly Protocol v2.0.0
